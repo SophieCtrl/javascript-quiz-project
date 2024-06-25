@@ -10,14 +10,17 @@ class Quiz {
     this.currentQuestionIndex = 0;
   }
 
+  // 2. getQuestion()
   getQuestion() {
     return this.questions[this.currentQuestionIndex];
   }
 
+  // 3. moveToNextQuestion()
   moveToNextQuestion() {
-    this.currentQuestionIndex += 1;
+    this.currentQuestionIndex++;
   }
 
+  // 4. shuffleQuestions()
   shuffleQuestions() {
     // this.randomQuestion = this.choices[Math.floor(Math.random * this.choices.length)];
     for (let i = this.questions.length - 1; i >= 0; i--) {
@@ -29,27 +32,22 @@ class Quiz {
     }
   }
 
-  checkAnswers(answer) {
+  // 5. checkAnswer(answer)
+  checkAnswer(answer) {
     if (answer === this.questions[this.currentQuestionIndex].answer)
-      this.correctAnswers += 1;
+      this.correctAnswers++;
   }
 
+  // shorter version with new syntax
+  // this.questions[this.currentQuestionIndex === answer].answer && this.correctAnswers++
+
+  // 6. hasEnded()
   hasEnded() {
     if (this.currentQuestionIndex < this.questions.length) return false;
     return true;
   }
 
-  // 2. getQuestion()
-
-  // 3. moveToNextQuestion()
-
-  // 4. shuffleQuestions()
-
-  // 5. checkAnswer(answer)
-
-  // 6. hasEnded()
-
-  // day2
+  // Day2
   filterQuestionsByDifficulty(difficulty) {
     //if (isNaN(this.difficulty)) return;
     if (isNaN(difficulty) || difficulty < 1 || difficulty > 3) {
@@ -62,5 +60,16 @@ class Quiz {
     );
 
     return this.questions;
+  }
+
+  averageDifficulty() {
+    const totalDifficulty = this.questions.reduce(
+      (accumulator, currentValue) => {
+        accumulator + currentValue.difficulty;
+      },
+      0
+    );
+
+    return totalDifficulty / this.questions.length;
   }
 }
