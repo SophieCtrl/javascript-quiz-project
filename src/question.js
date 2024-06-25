@@ -18,3 +18,6 @@ class Question {
     }
   }
 }
+
+// shorter solution for smaller range for shuffleChoices()
+// this.choice.sort(() => Math.random() - 0.5)

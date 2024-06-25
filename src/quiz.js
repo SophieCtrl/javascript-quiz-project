@@ -64,9 +64,7 @@ class Quiz {
 
   averageDifficulty() {
     const totalDifficulty = this.questions.reduce(
-      (accumulator, currentValue) => {
-        accumulator + currentValue.difficulty;
-      },
+      (accumulator, currentValue) => accumulator + currentValue.difficulty,
       0
     );
 
