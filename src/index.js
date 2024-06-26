@@ -107,24 +107,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 2. Update the green progress bar
     // Update the green progress bar (div#progressBar) width so that it shows the percentage of questions answered
-    let progressValue = 100 / questions.length;
-    progressBar.style.width = `${progressValue}%`; // This value is hardcoded as a placeholder
+    let progressValue = (quiz.currentQuestionIndex / questions.length) * 100;
+    progressBar.style.width = `${progressValue}%`;
 
     // 3. Update the question count text
     // Update the question count (div#questionCount) show the current question out of total questions
-    let questIndex = 1;
-    questionCount.innerText = `Question ${questIndex} of ${questions.length}`; //  This value is hardcoded as a placeholder
-
-    // quiz progress
-    nextButton.addEventListener("click", () => {
-      quiz.moveToNextQuestion();
-      const newQuestion = quiz.getQuestion();
-      questionContainer.innerText = newQuestion.text;
-      progressValue += 100 / questions.length;
-      progressBar.style.width = `${progressValue}%`;
-      questIndex++;
-      questionCount.innerText = `Question ${questIndex} of ${questions.length}`;
-    });
+    questionCount.innerText = `Question ${quiz.currentQuestionIndex + 1} of ${
+      questions.length
+    }`;
 
     // 4. Create and display new radio input element with a label for each choice.
     // Loop through the current question `choices`.
@@ -136,28 +126,25 @@ document.addEventListener("DOMContentLoaded", () => {
         <br>
       */
     // Hint 1: You can use the `document.createElement()` method to create a new element.
-    [...questions][questIndex].choices.forEach((element) => {
+    question.choices.forEach((choice) => {
       const radioElement = document.createElement("input");
-      radioElement.setAttribute("type", "radio");
-      radioElement.setAttribute("name", "choice");
-      radioElement.setAttribute("value", `${element}`);
+      radioElement.type = "radio";
+      radioElement.name = "choice";
+      radioElement.value = choice;
+
       const labelElement = document.createElement("label");
-      labelElement.innerHTML = element;
+      labelElement.innerText = choice;
+
       const breakElement = document.createElement("br");
-      console.log(element);
 
-      const choices = document.querySelector("#choices");
-      choices.appendChild(radioElement);
-      choices.appendChild(labelElement);
-      choices.appendChild(breakElement);
+      choiceContainer.appendChild(radioElement);
+      choiceContainer.appendChild(labelElement);
+      choiceContainer.appendChild(breakElement);
     });
-
-    console.log([...questions][0].choices);
-
-    // Hint 2: You can use the `element.type`, `element.name`, and `element.value` properties to set the type, name, and value of an element.
-    // Hint 3: You can use the `element.appendChild()` method to append an element to the choices container.
-    // Hint 4: You can use the `element.innerText` property to set the inner text of an element.
   }
+  // Hint 2: You can use the `element.type`, `element.name`, and `element.value` properties to set the type, name, and value of an element.
+  // Hint 3: You can use the `element.appendChild()` method to append an element to the choices container.
+  // Hint 4: You can use the `element.innerText` property to set the inner text of an element.
 
   function nextButtonHandler() {
     let selectedAnswer; // A variable to store the selected answer value
@@ -165,18 +152,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // YOUR CODE HERE:
     //
     // 1. Get all the choice elements. You can use the `document.querySelectorAll()` method.
-    const choiceElements = document.querySelectorAll("#choices");
+    const choiceElements = document.querySelectorAll('input[name="choice"]');
     // 2. Loop through all the choice elements and check which one is selected
-    /* 
 
-    [...choiceElements].forEach((element) => {
-      if (element.classList.includes(".checked") {
-
-      })
-    })
-
-    */
-
+    choiceElements.forEach((choiceElement) => {
+      if (choiceElement.checked) {
+        selectedAnswer = choiceElement.value;
+      }
+    });
+    if (selectedAnswer != null) {
+      quiz.checkAnswer(selectedAnswer);
+      quiz.moveToNextQuestion();
+      showQuestion();
+    } else {
+      alert("Please select an answer before proceeding.");
+    }
     // Hint: Radio input elements have a property `.checked` (e.g., `element.checked`).
     //  When a radio input gets selected the `.checked` property will be set to true.
     //  You can use check which choice was selected by checking if the `.checked` property is true.
@@ -197,6 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
     endView.style.display = "flex";
 
     // 3. Update the result container (div#result) inner text to show the number of correct answers out of total questions
-    resultContainer.innerText = `You scored 1 out of 1 correct answers!`; // This value is hardcoded as a placeholder
+    resultContainer.innerText = `You scored ${quiz.correctAnswers} out of ${questions.length} correct answers!`;
   }
 });
