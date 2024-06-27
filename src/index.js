@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // End view elements
   const resultContainer = document.querySelector("#result");
+  const restartButton = document.querySelector("#restartButton"); // Restart Button element
 
   /************  SET VISIBILITY OF VIEWS  ************/
 
@@ -76,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /************  EVENT LISTENERS  ************/
 
   nextButton.addEventListener("click", nextButtonHandler);
+  restartButton.addEventListener("click", restartQuiz); // Event Listener for Restart Button
 
   /************  FUNCTIONS  ************/
 
@@ -188,5 +190,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 3. Update the result container (div#result) inner text to show the number of correct answers out of total questions
     resultContainer.innerText = `You scored ${quiz.correctAnswers} out of ${questions.length} correct answers!`;
+  }
+
+  // Restart Quiz Button
+  function restartQuiz() {
+    // Reset quiz state
+    quiz.currentQuestionIndex = 0;
+    quiz.correctAnswers = 0;
+
+    // Shuffle the questions if needed
+    quiz.shuffleQuestions();
+
+    //// Reset timer
+    //clearInterval(timer); // Clear any existing interval
+    //quiz.timeRemaining = quizDuration; // Reset time
+    //startTimer(); // Assuming you have a startTimer function to manage the timer
+    //
+    // Hide the end view and show the quiz view
+    endView.style.display = "none";
+    quizView.style.display = "block";
+
+    // Show the first question again
+    showQuestion();
   }
 });
