@@ -58,22 +58,42 @@ document.addEventListener("DOMContentLoaded", () => {
   /************  SHOW INITIAL CONTENT  ************/
 
   // Convert the time remaining in seconds to minutes and seconds, and pad the numbers with zeros if needed
-  const minutes = Math.floor(quiz.timeRemaining / 60)
-    .toString()
-    .padStart(2, "0");
-  const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+
 
   // Display the time remaining in the time remaining container
   const timeRemainingContainer = document.getElementById("timeRemaining");
-  timeRemainingContainer.innerText = `${minutes}:${seconds}`;
+  
 
   // Show first question
   showQuestion();
+  
+ 
 
   /************  TIMER  ************/
 
   let timer;
 
+  function startTimer() {
+    quiz.timeRemaining = quizDuration; // Reset the time remaining
+    clearInterval(timer); // Ensure any previous interval is cleared
+    
+    timer = setInterval(function() {
+      quiz.timeRemaining--;
+
+      const minutes = Math.floor(quiz.timeRemaining / 60).toString().padStart(2, "0");
+      const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+
+      timeRemainingContainer.innerText = `Remaining Time: ${minutes}:${seconds}`;
+
+      if (quiz.timeRemaining <= 0 || quiz.hasEnded()) {
+        quiz.timeRemaining = quizDuration;
+        clearInterval(timer);
+        showResults();
+      }
+    }, 1000);
+  }
+
+  startTimer()
   /************  EVENT LISTENERS  ************/
 
   nextButton.addEventListener("click", nextButtonHandler);
@@ -84,6 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // showQuestion() - Displays the current question and its choices
   // nextButtonHandler() - Handles the click on the next button
   // showResults() - Displays the end view and the quiz results
+
+
 
   function showQuestion() {
     // If the quiz has ended, show the results
@@ -201,16 +223,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Shuffle the questions if needed
     quiz.shuffleQuestions();
 
-    //// Reset timer
+    // Reset timer
     //clearInterval(timer); // Clear any existing interval
     //quiz.timeRemaining = quizDuration; // Reset time
     //startTimer(); // Assuming you have a startTimer function to manage the timer
-    //
+    
     // Hide the end view and show the quiz view
     endView.style.display = "none";
     quizView.style.display = "block";
 
     // Show the first question again
+    startTimer();
     showQuestion();
   }
 });
