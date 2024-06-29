@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add more questions here
   ];
   const quizDuration = 120; // 120 seconds (2 minutes)
+
   /************  QUIZ INSTANCE  ************/
   // Create a new Quiz instance object
   const quiz = new Quiz(questions, quizDuration, quizDuration);
@@ -56,8 +57,31 @@ document.addEventListener("DOMContentLoaded", () => {
   timeRemainingContainer.innerText = `${minutes}:${seconds}`;
   // Show first question
   showQuestion();
+
   /************  TIMER  ************/
+  const timerElement = document.querySelector("#timeRemaining");
+
   let timer;
+  timer = quiz.timeRemaining;
+  // display remaining seconds as minutes:seconds
+  timerElement.innerHTML = `${Math.floor(timer / 60).toString()}:${(timer % 60)
+    .toString()
+    .padStart(2, "0")}`;
+
+  const IntervalId = setInterval(() => {
+    if (timer >= 0)
+      timerElement.innerHTML = `${Math.floor(timer / 60).toString()}:${(
+        timer % 60
+      )
+        .toString()
+        .padStart(2, "0")}`;
+    if (!timer) {
+      clearInterval(IntervalId);
+      showResults();
+    }
+    timer--;
+  }, 1000);
+
   /************  EVENT LISTENERS  ************/
   nextButton.addEventListener("click", nextButtonHandler);
   /************  FUNCTIONS  ************/
@@ -102,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
       */
     // Hint 1: You can use the `document.createElement()` method to create a new element.
     question.choices.forEach((choice) => {
-      // ------> improve by adding li element which includes rest
       const listElement = document.createElement("li");
       listElement.innerHTML = `<input type="radio" name="choice" value="${choice}">
           <label>${choice}</label>
@@ -149,5 +172,18 @@ document.addEventListener("DOMContentLoaded", () => {
     endView.style.display = "flex";
     // 3. Update the result container (div#result) inner text to show the number of correct answers out of total questions
     resultContainer.innerText = `You scored ${quiz.correctAnswers} out of ${questions.length} correct answers!`;
+    restartButton.setAttribute("display", "block");
   }
+
+  const restartButton = document.querySelector("#restartButton");
+  //restartButton.setAttribute("display", "none");
+
+  restartButton.addEventListener("click", () => {
+    quizView.style.display = "block";
+    endView.style.display = "none";
+    quiz.currentQuestionIndex = 0;
+    quiz.correctAnswers = 0;
+    showQuestion();
+    console.log("Work");
+  });
 });
