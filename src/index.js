@@ -54,32 +54,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
   // Display the time remaining in the time remaining container
   const timeRemainingContainer = document.getElementById("timeRemaining");
-  timeRemainingContainer.innerText = `${minutes}:${seconds}`;
+
+  // Show first question
+  showQuestion();
+
+  /************  SHOW INITIAL CONTENT  ************/
+  // Convert the time remaining in seconds to minutes and seconds, and pad the numbers with zeros if needed
+
+  const updateTimer = () => {
+    const minutes = Math.floor(quiz.timeRemaining / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+    timeRemainingContainer.innerText = `${minutes}:${seconds}`;
+  };
+
+  updateTimer();
+
   // Show first question
   showQuestion();
 
   /************  TIMER  ************/
-  const timerElement = document.querySelector("#timeRemaining");
-
-  let timer;
-  timer = quiz.timeRemaining;
-  // display remaining seconds as minutes:seconds
-  timerElement.innerHTML = `${Math.floor(timer / 60).toString()}:${(timer % 60)
-    .toString()
-    .padStart(2, "0")}`;
-
-  const IntervalId = setInterval(() => {
-    if (timer >= 0)
-      timerElement.innerHTML = `${Math.floor(timer / 60).toString()}:${(
-        timer % 60
-      )
-        .toString()
-        .padStart(2, "0")}`;
-    if (!timer) {
-      clearInterval(IntervalId);
+  let timer = setInterval(() => {
+    if (quiz.timeRemaining > 0) {
+      quiz.timeRemaining--;
+      updateTimer();
+    } else {
+      clearInterval(timer);
       showResults();
     }
-    timer--;
   }, 1000);
 
   /************  EVENT LISTENERS  ************/
@@ -183,7 +186,24 @@ document.addEventListener("DOMContentLoaded", () => {
     endView.style.display = "none";
     quiz.currentQuestionIndex = 0;
     quiz.correctAnswers = 0;
+    quiz.timeRemaining = quizDuration;
+
+    // Reset the progress bar
+    progressBar.style.width = "0%";
+
+    // Hide the restart button
+    restartButton.style.display = "none";
     showQuestion();
     console.log("Work");
+    clearInterval(timer);
+    timer = setInterval(() => {
+      if (quiz.timeRemaining > 0) {
+        quiz.timeRemaining--;
+        updateTimer();
+      } else {
+        clearInterval(timer);
+        showResults();
+      }
+    }, 1000);
   });
 });
